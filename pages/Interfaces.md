@@ -140,7 +140,7 @@ The easiest method is to just use a type assertion:
 let mySquare = createSquare({ width: 100, opacity: 0.5 } as SquareConfig);
 ```
 
-However, a better approach to might to add a string index signature if you're sure that the object can have some extra properties that are used in some special way.
+However, a better approach might be to add a string index signature if you're sure that the object can have some extra properties that are used in some special way.
 If `SquareConfig`s can have `color` and `width` properties with the above types, but could *also* have any number of other properties, then we could define it like so:
 
 ```ts
@@ -478,10 +478,10 @@ class Location {
 }
 ```
 
-In the above example, 'SelectableControl' contains all of the members of 'Control', including the private 'state' property.
-Since 'state' is a private member it is only possible for descendants of 'Control' to implement 'SelectableControl'.
-This is because only descendants of 'Control' will have a 'state' private member that originates in the same declaration, which is a requirement for private members to be compatible.
+In the above example, `SelectableControl` contains all of the members of `Control`, including the private `state` property.
+Since `state` is a private member it is only possible for descendants of `Control` to implement `SelectableControl`.
+This is because only descendants of `Control` will have a `state` private member that originates in the same declaration, which is a requirement for private members to be compatible.
 
-Within the 'Control' class it is possible to access the 'state' private member through an instance of 'SelectableControl'.
-Effectively, a 'SelectableControl' acts like a 'Control' that is known to have a 'select' method.
-The 'Button' and 'TextBox' classes are subtypes of 'SelectableControl' (because they both inherit from 'Control' and have a 'select' method), but the 'Image' and 'Location' classes are not.
+Within the `Control` class it is possible to access the `state` private member through an instance of `SelectableControl`.
+Effectively, a `SelectableControl` acts like a `Control` that is known to have a `select` method.
+The `Button` and `TextBox` classes are subtypes of `SelectableControl` (because they both inherit from `Control` and have a `select` method), but the `Image` and `Location` classes are not.

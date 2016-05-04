@@ -268,25 +268,23 @@ loggingIdentity({length: 10, value: 3});
 
 ## Using Type Parameters in Generic Constraints
 
-In some cases, it may be useful to declare a type parameter that is constrained by another type parameter. For example,
+You can declare a type parameter that is constrained by another type parameter.
+For example, here we'd like to take two objects and copy properties from one to the other.
+We'd like to ensure that we're not accidentally writing any extra properties from our `source`, so we'll place a constraint between the two types:
 
 ```ts
-function find<T, U extends Findable<T>>(n: T, s: U) {   // errors because type parameter used in constraint
-  // ...
+function copyFields<T extends U, U>(target: T, source: U): T {
+    for (let id in source) {
+        target[id] = source[id];
+    }
+    return target;
 }
-find (giraffe, myAnimals);
+
+let x = { a: 1, b: 2, c: 3, d: 4 };
+
+copyFields(x, { b: 10, d: 20 }); // okay
+copyFields(x, { Q: 90 });  // error: property 'Q' isn't declared in 'x'.
 ```
-
-You can achieve the pattern above by replacing the type parameter with its constraint. Rewriting the example above,
-
-```ts
-function find<T>(n: T, s: Findable<T>) {
-  // ...
-}
-find(giraffe, myAnimals);
-```
-
-*Note:* The above is not strictly identical, as the return type of the first function could have returned `U`, which the second function pattern does not provide a means to do.
 
 ## Using Class Types in Generics
 

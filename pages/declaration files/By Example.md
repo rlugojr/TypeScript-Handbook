@@ -114,9 +114,10 @@ declare function getWidget(s: string): Widget[];
 
 > When specifying a greeting, you must pass a `GreetingSettings` object.
 > This object has the following properties:
-> - greeting: Mandatory string
-> - duration: Optional length of time (in milliseconds)
-> - color: Optional string, e.g. '#ff00ff'
+>
+> 1- greeting: Mandatory string
+> 2- duration: Optional length of time (in milliseconds)
+> 3- color: Optional string, e.g. '#ff00ff'
 
 *Code*
 
@@ -165,7 +166,7 @@ greet(new MyGreeter());
 You can use a type alias to make a shorthand for a type:
 
 ```ts
-type GreetingLike = string | (() => string) | Greeting;
+type GreetingLike = string | (() => string) | MyGreeter;
 
 declare function greet(g: GreetingLike): void;
 ```

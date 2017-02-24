@@ -32,7 +32,7 @@ Some examples include:
 Any other import is considered **non-relative**.
 Some examples include:
 
-* `import * as $ from "jQuery";`
+* `import * as $ from "jquery";`
 * `import { Component } from "angular2/core";`
 
 A relative import is resolved relative to the importing file and *cannot* resolve to an ambient module declaration.
@@ -40,13 +40,13 @@ You should use relative imports for your own modules that are guaranteed to main
 
 A non-relative import can be resolved relative to `baseUrl`, or through path mapping, which we'll cover below.
 They can also resolve to [ambient module declarations](./Modules.md#ambient-modules).
-Use non-relative paths when importing any of your external dependnecies.
+Use non-relative paths when importing any of your external dependencies.
 
 ## Module Resolution Strategies
 
 There are two possible module resolution strategies: [Node](#node) and [Classic](#classic).
 You can use the `--moduleResolution` flag to specify the module resolution strategy.
-The default if not specified is [Node](#node).
+If not specified, the default is [Classic](#classic) for `--module AMD | System | ES2015` or [Node](#node) otherwise.
 
 ### Classic
 
@@ -142,7 +142,7 @@ For example, an import statement like `import { b } from "./moduleB"` in  `/root
 Recall that Node.js looked for a file named `moduleB.js`, then an applicable `package.json`, and then for an `index.js`.
 
 Similarly a non-relative import will follow the Node.js resolution logic, first looking up a file, then looking up an applicable folder.
-So `import { b } from "moduleB"` in source file `/src/moduleA.ts` would result in the following lookups:
+So `import { b } from "moduleB"` in source file `/root/src/moduleA.ts` would result in the following lookups:
 
 1. `/root/src/node_modules/moduleB.ts`
 2. `/root/src/node_modules/moduleB.tsx`
@@ -213,13 +213,15 @@ Here is an example for how to specify the `"paths"` property for `jquery`.
 ```json
 {
   "compilerOptions": {
+    "baseUrl": ".", // This must be specified if "paths" is.
     "paths": {
-      "jquery": ["node_modules/jquery/dist/jquery.d.ts"]
+      "jquery": ["node_modules/jquery/dist/jquery"]
     }
+  }
 }
 ```
 
-Using `"paths"` also allow for more sophisticated mappings including multiple fall back locations.
+Using `"paths"` also allows for more sophisticated mappings including multiple fall back locations.
 Consider a project configuration where only some modules are available in one location, and the rest are in another.
 A build step would put them all together in one place.
 The project layout may look like:
@@ -240,15 +242,15 @@ The corresponding `tsconfig.json` would look like:
 
 ```json
 {
-    "compilerOptions": {
-        "baseUrl": ".",
-        "paths": {
-            "*": [
-                    "*",
-                    "generated/*"
-                ]
-            }
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "*": [
+        "*",
+        "generated/*"
+      ]
     }
+  }
 }
 ```
 
@@ -262,15 +264,15 @@ Following this logic, the compiler will attempt to resolve the two imports as su
 * import 'folder1/file2'
   1. pattern '*' is matched and wildcard captures the whole module name
   2. try first substitution in the list: '*' -> `folder1/file2`
-  3. result of substitution is relative name - combine it with *baseUrl* -> `projectRoot/folder1/file2.ts`.
+  3. result of substitution is non-relative name - combine it with *baseUrl* -> `projectRoot/folder1/file2.ts`.
   4. File exists. Done.
 * import 'folder2/file3'
   1. pattern '*' is matched and wildcard captures the whole module name
   2. try first substitution in the list: '*' -> `folder2/file3`
-  3. result of substitution is relative name - combine it with *baseUrl* -> `projectRoot/folder2/file3.ts`.
+  3. result of substitution is non-relative name - combine it with *baseUrl* -> `projectRoot/folder2/file3.ts`.
   4. File does not exist, move to the second substitution
   5. second substitution 'generated/*' -> `generated/folder2/file3`
-  6. result of substitution is relative name - combine it with *baseUrl* -> `projectRoot/generated/folder2/file3.ts`.
+  6. result of substitution is non-relative name - combine it with *baseUrl* -> `projectRoot/generated/folder2/file3.ts`.
   7. File exists. Done.
 
 ### Virtual Directories with `rootDirs`
@@ -342,7 +344,7 @@ Invoking the compiler with `--traceResolution`
 tsc --traceResolution
 ```
 
-Results in an output as such:
+Results in an output such as:
 
 ```txt
 ======== Resolving module 'typescript' from 'src/app.ts'. ========
@@ -385,7 +387,7 @@ Normally the compiler will attempt to resolve all module imports before it start
 Every time it successfully resolves an `import` to a file, the file is added to the set of files the compiler will process later on.
 
 The `--noResolve` compiler options instructs the compiler not to "add" any files to the compilation that were not passed on the command line.
-It will still try to resolve the module to files, but if the file as not specified, it will not be included.
+It will still try to resolve the module to files, but if the file is not specified, it will not be included.
 
 For instance:
 

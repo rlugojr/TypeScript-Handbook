@@ -55,15 +55,15 @@ The first way is to pass all of the arguments, including the type argument, to t
 let output = identity<string>("myString");  // type of output will be 'string'
 ```
 
-Here we explicitly set `T` to be string as one of the arguments to the function call, denoted using the `<>` around the arguments rather than `()`.
+Here we explicitly set `T` to be `string` as one of the arguments to the function call, denoted using the `<>` around the arguments rather than `()`.
 
-The second way is also perhaps the most common. Here we use *type argument inference*, that is, we want the compiler to set the value of `T` for us automatically based on the type of the argument we pass in:
+The second way is also perhaps the most common. Here we use *type argument inference* -- that is, we want the compiler to set the value of `T` for us automatically based on the type of the argument we pass in:
 
 ```ts
 let output = identity("myString");  // type of output will be 'string'
 ```
 
-Notice that we didn't have to explicitly pass the type in the angle brackets (`<>`), the compiler just looked at the value `"myString"`, and set `T` to its type.
+Notice that we didn't have to explicitly pass the type in the angle brackets (`<>`); the compiler just looked at the value `"myString"`, and set `T` to its type.
 While type argument inference can be a helpful tool to keep code shorter and more readable, you may need to explicitly pass in the type arguments as we did in the previous example when the compiler fails to infer the type, as may happen in more complex examples.
 
 # Working with Generic Type Variables
@@ -227,7 +227,7 @@ Generic classes are only generic over their instance side rather than their stat
 # Generic Constraints
 
 If you remember from an earlier example, you may sometimes want to write a generic function that works on a set of types where you have some knowledge about what capabilities that set of types will have.
-In our `loggingIdentity` example, we wanted to be able access the `.length` property of `arg`, but the compiler could not prove that every type had a `.length` property, so it warns us that we can't make this assumption.
+In our `loggingIdentity` example, we wanted to be able to access the `.length` property of `arg`, but the compiler could not prove that every type had a `.length` property, so it warns us that we can't make this assumption.
 
 ```ts
 function loggingIdentity<T>(arg: T): T {
@@ -269,21 +269,18 @@ loggingIdentity({length: 10, value: 3});
 ## Using Type Parameters in Generic Constraints
 
 You can declare a type parameter that is constrained by another type parameter.
-For example, here we'd like to take two objects and copy properties from one to the other.
-We'd like to ensure that we're not accidentally writing any extra properties from our `source`, so we'll place a constraint between the two types:
+For example, here we'd like to get a property from an object given its name.
+We'd like to ensure that we're not accidentally grabbing a property that does not exist on the `obj`, so we'll place a constraint between the two types:
 
 ```ts
-function copyFields<T extends U, U>(target: T, source: U): T {
-    for (let id in source) {
-        target[id] = source[id];
-    }
-    return target;
+function getProperty<T, K extends keyof T>(obj: T, key: K) {
+    return obj[key];
 }
 
 let x = { a: 1, b: 2, c: 3, d: 4 };
 
-copyFields(x, { b: 10, d: 20 }); // okay
-copyFields(x, { Q: 90 });  // error: property 'Q' isn't declared in 'x'.
+getProperty(x, "a"); // okay
+getProperty(x, "m"); // error: Argument of type 'm' isn't assignable to 'a' | 'b' | 'c' | 'd'.
 ```
 
 ## Using Class Types in Generics
